@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Alive.Net.Example
 {
@@ -36,7 +36,7 @@ namespace Alive.Net.Example
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
-            if (env.IsDevelopment())
+            if(env.IsDevelopment())
             {
                 app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
@@ -48,6 +48,21 @@ namespace Alive.Net.Example
             app.UseAlive(a =>
             {
                 a.BodyText = "Im awesome";
+                a.StatusCode = System.Net.HttpStatusCode.OK;
+                a.LivecheckPath = new Microsoft.AspNet.Http.PathString("/CustomLivecheck");
+            });
+            app.UseAlive(a => a.OnLivecheckResponse = (response) =>
+            {
+                if(true)
+                {
+                    response.BodyText = "awesome";
+                    response.StatusCode = System.Net.HttpStatusCode.BadGateway;
+                }
+                else
+                {
+                    response.BodyText = "awesome";
+                    response.StatusCode = System.Net.HttpStatusCode.OK;
+                }
             });
             app.UseIISPlatformHandler();
 

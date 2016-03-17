@@ -1,9 +1,9 @@
 ﻿{
-  "version": "1.0.0-*",
-  "description": "Alive.Net Class Library",
+  "version": "1.0.1",
+  "description": "Livecheck middlewear",
   "authors": [ "Tommy Parnell" ],
-  "tags": [ "" ],
-  "projectUrl": "",
+  "tags": [ "aspcore", "livecheck", "middlewear" ],
+  "projectUrl": "https://github.com/tparnell8/Alive.Net",
   "licenseUrl": "",
   "dependencies": {
     "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final"

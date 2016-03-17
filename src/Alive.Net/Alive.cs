@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Http;
-using System;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Http;
 
 namespace Alive.Net
 {
@@ -10,12 +10,12 @@ namespace Alive.Net
     {
         private RequestDelegate _next;
 
-        private AliveOptions Options { get; set; }
+        internal AliveOptions Options { get; set; }
 
         public Alive(RequestDelegate next, AliveOptions options)
         {
             Options = options ?? new AliveOptions();
-            if (next == null)
+            if(next == null)
             {
                 throw new ArgumentNullException(nameof(next), "RequestDelegate not passed in");
             }
@@ -24,19 +24,35 @@ namespace Alive.Net
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path.Equals(this.Options.LivecheckPath, StringComparison.CurrentCultureIgnoreCase))
+            if(context.Request.Path.Equals(this.Options.LivecheckPath, StringComparison.CurrentCultureIgnoreCase))
             {
-                context.Response.StatusCode = (int)this.Options.ReturnStatusCode;
-                if (!string.IsNullOrWhiteSpace(Options.BodyText))
+                var response = CalculateResponse(this.Options);
+                context.Response.StatusCode = (int)response.StatusCode;
+                if(!string.IsNullOrWhiteSpace(response.BodyText))
                 {
-                    await context.Response.WriteAsync(Options.BodyText);
+                    await context.Response.WriteAsync(response.BodyText);
                 }
             }
             else
             {
-                await _next?.Invoke(context);
+                _next?.Invoke(context);
             }
-            //context.Request.Path.
+        }
+
+        public static AliveResponse CalculateResponse(AliveOptions options)
+        {
+            if(options == null)
+            {
+                throw new ArgumentNullException("options");
+            }
+            var response = new AliveResponse();
+            if(!string.IsNullOrWhiteSpace(options.BodyText))
+            {
+                response.BodyText = options.BodyText;
+            }
+            response.StatusCode = options.StatusCode;
+            options.OnLivecheckResponse?.Invoke(response);
+            return response;
         }
     }
 
@@ -48,18 +64,6 @@ namespace Alive.Net
         /// <param name="app"></param>
         /// <param name="options">Setup your options</param>
         public static void UseAlive(this IApplicationBuilder app, Action<AliveOptions> options)
-        {
-            var userOptions = new AliveOptions();
-            options?.Invoke(userOptions);
-            app.UseMiddleware<Alive>(userOptions);
-        }
-
-        /// <summary>
-        /// Automatic livecheck
-        /// </summary>
-        /// <param name="app"></param>
-        /// <param name="options">Setup your options</param>
-        public static void UseHeartBeat(this IApplicationBuilder app, Action<AliveOptions> options)
         {
             var userOptions = new AliveOptions();
             options?.Invoke(userOptions);

@@ -1,23 +1,20 @@
 ﻿{
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Livecheck middlewear",
   "authors": [ "Tommy Parnell" ],
-  "tags": [ "aspcore", "livecheck", "middlewear" ],
-  "projectUrl": "https://github.com/tparnell8/Alive.Net",
-  "licenseUrl": "",
-  "dependencies": {
-    "Microsoft.AspNet.Http.Abstractions": "1.0.0-rc1-final"
+  "packOptions": {
+    "tags": [ "aspcore", "livecheck", "middlewear" ],
+    "projectUrl": "https://github.com/tparnell8/Alive.Net"
   },
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+    "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0"
+  },
+
   "frameworks": {
-    "net451": { },
-    "dotnet5.4": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Runtime": "4.0.21-beta-23516",
-        "System.Threading": "4.0.11-beta-23516"
-      }
+    "netstandard1.6": {
+      "imports": "dnxcore50"
     }
   }
-}
+ }
